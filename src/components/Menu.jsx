@@ -121,6 +121,7 @@ const Menu = () => {
   return (
     <div className="space-y-6">
       {/* Category Tabs */}
+      <h2 className="text-2xl font-bold text-blue-700 mt-3 mb-4">Categories</h2>
       <div className="flex flex-wrap gap-2 pb-2 border-b border-gray-200">
         {categories.map((cat) => (
           <Button
