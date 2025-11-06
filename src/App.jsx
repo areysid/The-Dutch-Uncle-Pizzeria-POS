@@ -6,6 +6,7 @@ import Menu from "./components/Menu";
 import Orders from "./components/Orders";
 import Inventory from "./components/Inventory";
 import Reports from "./components/Reports";
+import Footer from './components/Footer';
 
 // =================================================================
 // MAIN APPLICATION COMPONENT
@@ -68,6 +69,7 @@ function App() {
       <main className="p-4 md:p-6 lg:p-8 space-y-6">
         {renderContent()}
       </main>
+      <Footer />
     </div>
   );
 }
