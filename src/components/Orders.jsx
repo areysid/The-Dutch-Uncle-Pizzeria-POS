@@ -331,7 +331,7 @@ const handlePrint = (order) => {
   const slipHTML = `
     <html>
       <head><meta charset="UTF-8"><title>Order #${order.id}</title></head>
-      <body>
+      <body style="font-family: monospace; font-size: 12px;">
         <center><b>🧾 Order Slip</b></center><br/>
         Order ID: ${order.id}<br/>
         Payment: ${order.payment_mode}<br/><br/>
@@ -347,10 +347,12 @@ const handlePrint = (order) => {
       </body>
     </html>`;
 
-  // ✅ Encode and send to RawBT
   const encoded = encodeURIComponent(slipHTML);
-  window.location.href = `rawbt:${encoded}`;
+
+  // ✅ tell RawBT to treat it as HTML
+  window.location.href = `rawbt:html:${encoded}`;
 };
+
 
 
 
