@@ -336,7 +336,7 @@ const handlePrint = (order) => {
   slipText += "-----------------------------\n";
 
   order.items.forEach((i) => {
-    const line = `${i.name} x${i.quantity} Rs. ${(i.price * i.quantity).toFixed(2)}`;
+    const line = `${i.name} x${i.quantity} Rs${(i.price * i.quantity).toFixed(2)}`;
     slipText += line + "\n";
   });
 
