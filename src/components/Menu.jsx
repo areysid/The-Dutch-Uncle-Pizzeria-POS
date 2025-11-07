@@ -118,11 +118,24 @@ const Menu = () => {
       ? menu
       : menu.filter((item) => item.category === activeCategory);
 
+  const handleDeleteCategory = (name) => {
+    if (!window.confirm(`Are you sure you want to delete "${name}" category?`)) return;
+
+    api
+      .delete(`/menu/categories/${encodeURIComponent(name)}`)
+      .then(() => {
+        fetchCategories();
+        if (activeCategory === name) setActiveCategory("All");
+      })
+      .catch((err) => console.error("Delete Category Error:", err));
+  };
+
+
   return (
     <div className="space-y-6">
       {/* Category Tabs */}
       <h2 className="text-2xl font-bold text-blue-700 mt-3 mb-4">Categories</h2>
-      <div className="flex flex-wrap gap-2 pb-2 border-b border-gray-200">
+      {/* <div className="flex flex-wrap gap-2 pb-2 border-b border-gray-200">
         {categories.map((cat) => (
           <Button
             key={cat}
@@ -137,7 +150,38 @@ const Menu = () => {
             {cat}
           </Button>
         ))}
+      </div> */}
+      <div className="flex flex-wrap gap-3 pb-2 border-b border-gray-200">
+        {categories.map((cat) => (
+          <div key={cat} className="flex items-center gap-0">
+            <Button
+              size="sm"
+              variant={activeCategory === cat ? "default" : "outline"}
+              className={`${activeCategory === cat
+                ? "bg-black text-white"
+                : "border-blue-700 text-black hover:bg-blue-700 hover:text-white"
+                }`}
+              onClick={() => setActiveCategory(cat)}
+            >
+              {cat}
+            </Button>
+
+            {/* Delete button (hide for "All") */}
+            {cat !== "All" && (
+              <Button
+                size="icon"
+                variant="ghost"
+                className="!bg-transparent text-red-500 hover:text-white hover:!bg-red-500"
+                onClick={() => handleDeleteCategory(cat)}
+              >
+                🗑️
+              </Button>
+            )}
+          </div>
+        ))}
       </div>
+
+
 
       {/* Menu List */}
       <Card>
@@ -218,9 +262,10 @@ const Menu = () => {
               value={form.category}
               onValueChange={(value) => setForm({ ...form, category: value })}
             >
-              <SelectTrigger>
+              <SelectTrigger className="!text-white">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
+
               <SelectContent>
                 {categories
                   .filter((c) => c !== "All")
