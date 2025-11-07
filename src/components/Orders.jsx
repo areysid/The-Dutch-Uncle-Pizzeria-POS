@@ -328,30 +328,29 @@ const Orders = () => {
 // };
 
 const handlePrint = (order) => {
-  const slipHTML = `
-    <html>
-      <head><meta charset="UTF-8"><title>Order #${order.id}</title></head>
-      <body style="font-family: monospace; font-size: 12px;">
-        <center><b>🧾 Order Slip</b></center><br/>
-        Order ID: ${order.id}<br/>
-        Payment: ${order.payment_mode}<br/><br/>
-        ${order.items
-          .map(
-            (i) =>
-              `${i.name}  x${i.quantity}  ₹${(i.price * i.quantity).toFixed(2)}<br/>`
-          )
-          .join("")}
-        <hr/>
-        <b>Total: ₹${order.total_price}</b><br/><br/>
-        <center>Thank you!</center>
-      </body>
-    </html>`;
+  let slipText = "";
+  slipText += "       🧾 ORDER SLIP\n";
+  slipText += "-----------------------------\n";
+  slipText += `Order ID: ${order.id}\n`;
+  slipText += `Payment: ${order.payment_mode}\n`;
+  slipText += "-----------------------------\n";
 
-  const encoded = encodeURIComponent(slipHTML);
+  order.items.forEach((i) => {
+    const line = `${i.name} x${i.quantity} ₹${(i.price * i.quantity).toFixed(2)}`;
+    slipText += line + "\n";
+  });
 
-  // ✅ tell RawBT to treat it as HTML
-  window.location.href = `rawbt:html:${encoded}`;
+  slipText += "-----------------------------\n";
+  slipText += `TOTAL: ₹${order.total_price}\n`;
+  slipText += "-----------------------------\n";
+  slipText += "      Thank you!\n";
+  slipText += "   Have a great day!\n\n\n\n"; // few line breaks for paper feed
+
+  // Encode and send to RawBT in text mode
+  const encoded = encodeURIComponent(slipText);
+  window.location.href = `rawbt:text:${encoded}`;
 };
+
 
 
 
