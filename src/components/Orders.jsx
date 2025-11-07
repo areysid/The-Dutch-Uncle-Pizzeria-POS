@@ -329,31 +329,26 @@ const Orders = () => {
 
 const handlePrint = (order) => {
   let slipText = "";
-  slipText += "       🧾 ORDER SLIP\n";
+  slipText += "       [ORDER SLIP]\n";
   slipText += "-----------------------------\n";
   slipText += `Order ID: ${order.id}\n`;
   slipText += `Payment: ${order.payment_mode}\n`;
   slipText += "-----------------------------\n";
 
   order.items.forEach((i) => {
-    const line = `${i.name} x${i.quantity} ₹${(i.price * i.quantity).toFixed(2)}`;
+    const line = `${i.name} x${i.quantity} Rs${(i.price * i.quantity).toFixed(2)}`;
     slipText += line + "\n";
   });
 
   slipText += "-----------------------------\n";
-  slipText += `TOTAL: ₹${order.total_price}\n`;
+  slipText += `TOTAL: Rs${order.total_price}\n`;
   slipText += "-----------------------------\n";
   slipText += "      Thank you!\n";
-  slipText += "   Have a great day!\n\n\n\n"; // few line breaks for paper feed
+  slipText += "   Have a great day!\n\n\n\n";
 
-  // Encode and send to RawBT in text mode
   const encoded = encodeURIComponent(slipText);
   window.location.href = `rawbt:text:${encoded}`;
 };
-
-
-
-
 
   const TABS = [
     { view: "pending", name: "Pending" },
