@@ -117,54 +117,242 @@ const Orders = () => {
       ? menu
       : menu.filter((item) => item.category === activeCategory);
 
+  
+  // const handlePrint = (order) => {
+  //   const printWindow = window.open("", "_blank");
+  //   const slipHTML = `
+  //     <html>
+  //       <head>
+  //         <title>Order Slip #${order.id}</title>
+  //         <style>
+  //           body { font-family: Arial, sans-serif; margin: 15px; width: 260px; }
+  //           h2 { text-align: center; font-size: 16px; margin-bottom: 10px; }
+  //           p { margin: 3px 0; font-size: 13px; }
+  //           table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  //           th, td { text-align: left; padding: 4px; }
+  //           th { border-bottom: 1px solid #000; }
+  //           tfoot td { border-top: 1px solid #000; font-weight: bold; }
+  //         </style>
+  //       </head>
+  //       <body>
+  //         <h2>🧾 Order Slip</h2>
+  //         <p><strong>Order ID:</strong> ${order.id}</p>
+  //         <p><strong>Payment:</strong> ${order.payment_mode}</p>
+  //         <table>
+  //           <thead>
+  //             <tr><th>Item</th><th>Qty</th><th>₹</th></tr>
+  //           </thead>
+  //           <tbody>
+  //             ${order.items
+  //       .map(
+  //         (i) =>
+  //           `<tr>
+  //                     <td>${i.name}</td>
+  //                     <td>${i.quantity}</td>
+  //                     <td>${(i.price * i.quantity).toFixed(2)}</td>
+  //                   </tr>`
+  //       )
+  //       .join("")}
+  //           </tbody>
+  //           <tfoot>
+  //             <tr><td colspan="2">Total</td><td>₹${order.total_price}</td></tr>
+  //           </tfoot>
+  //         </table>
+  //         <p style="text-align:center;margin-top:10px;">Thank you!</p>
+  //       </body>
+  //     </html>`;
+  // //   const slipHTML = `
+  // // <html>
+  // //   <head>
+  // //     <title>Order Slip #${order.id}</title>
+  // //     <style>
+  // //       @page {
+  // //         size: 58mm auto; /* force paper roll width */
+  // //         margin: 0;
+  // //       }
+  // //       body {
+  // //         font-family: Arial, sans-serif;
+  // //         width: 58mm;
+  // //         margin: 0;
+  // //         padding: 5px;
+  // //       }
+  // //       h2 { text-align: center; font-size: 14px; margin: 5px 0; }
+  // //       p { font-size: 12px; margin: 2px 0; }
+  // //       table { width: 100%; font-size: 12px; border-collapse: collapse; }
+  // //       th, td { text-align: left; padding: 2px; }
+  // //       th { border-bottom: 1px solid #000; }
+  // //       tfoot td { border-top: 1px solid #000; font-weight: bold; }
+  // //     </style>
+  // //   </head>
+  // //   <body>
+  // //     <h2>🧾 Order Slip</h2>
+  // //         <p><strong>Order ID:</strong> ${order.id}</p>
+  // //         <p><strong>Payment:</strong> ${order.payment_mode}</p>
+  // //         <table>
+  // //           <thead>
+  // //             <tr><th>Item</th><th>Qty</th><th>₹</th></tr>
+  // //           </thead>
+  // //           <tbody>
+  // //             ${order.items
+  // //       .map(
+  // //         (i) =>
+  // //           `<tr>
+  // //                     <td>${i.name}</td>
+  // //                     <td>${i.quantity}</td>
+  // //                     <td>${(i.price * i.quantity).toFixed(2)}</td>
+  // //                   </tr>`
+  // //       )
+  // //       .join("")}
+  // //           </tbody>
+  // //           <tfoot>
+  // //             <tr><td colspan="2">Total</td><td>₹${order.total_price}</td></tr>
+  // //           </tfoot>
+  // //         </table>
+  // //         <p style="text-align:center;margin-top:10px;">Thank you!</p>
+  // //   </body>
+  // // </html>`;
+
+  //   printWindow.document.write(slipHTML);
+  //   printWindow.document.close();
+  //   printWindow.print();
+  // };
+
   // 🖨️ Print Slip
-  const handlePrint = (order) => {
-    const printWindow = window.open("", "_blank");
-    const slipHTML = `
-      <html>
-        <head>
-          <title>Order Slip #${order.id}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 15px; width: 260px; }
-            h2 { text-align: center; font-size: 16px; margin-bottom: 10px; }
-            p { margin: 3px 0; font-size: 13px; }
-            table { width: 100%; border-collapse: collapse; font-size: 13px; }
-            th, td { text-align: left; padding: 4px; }
-            th { border-bottom: 1px solid #000; }
-            tfoot td { border-top: 1px solid #000; font-weight: bold; }
-          </style>
-        </head>
-        <body>
-          <h2>🧾 Order Slip</h2>
-          <p><strong>Order ID:</strong> ${order.id}</p>
-          <p><strong>Payment:</strong> ${order.payment_mode}</p>
-          <table>
-            <thead>
-              <tr><th>Item</th><th>Qty</th><th>₹</th></tr>
-            </thead>
-            <tbody>
-              ${order.items
-        .map(
-          (i) =>
-            `<tr>
-                      <td>${i.name}</td>
-                      <td>${i.quantity}</td>
-                      <td>${(i.price * i.quantity).toFixed(2)}</td>
-                    </tr>`
-        )
-        .join("")}
-            </tbody>
-            <tfoot>
-              <tr><td colspan="2">Total</td><td>₹${order.total_price}</td></tr>
-            </tfoot>
-          </table>
-          <p style="text-align:center;margin-top:10px;">Thank you!</p>
-        </body>
-      </html>`;
-    printWindow.document.write(slipHTML);
-    printWindow.document.close();
-    printWindow.print();
-  };
+//   const handlePrint = (order) => {
+//   const printWindow = window.open("", "_blank");
+//   const slipHTML = `
+//     <html>
+//       <head>
+//         <title>Order Slip #${order.id}</title>
+//         <style>
+//           @page {
+//             size: 58mm auto;  /* force roll width for thermal printers */
+//             margin: 0;
+//           }
+
+//           body {
+//             font-family: Arial, sans-serif;
+//             margin: 0;
+//             padding: 0;
+//             display: flex;
+//             justify-content: center;
+//             background: #fff;
+//           }
+
+//           .slip {
+//             width: 58mm;
+//             padding: 8px;
+//             font-size: 12px;
+//             line-height: 1.4;
+//             color: #000;
+//           }
+
+//           h2 {
+//             text-align: center;
+//             font-size: 14px;
+//             margin: 5px 0 10px;
+//           }
+
+//           p {
+//             margin: 3px 0;
+//             font-size: 12px;
+//           }
+
+//           table {
+//             width: 100%;
+//             border-collapse: collapse;
+//             font-size: 12px;
+//           }
+
+//           th, td {
+//             text-align: left;
+//             padding: 3px 0;
+//           }
+
+//           th {
+//             border-bottom: 1px solid #000;
+//             font-weight: bold;
+//           }
+
+//           tfoot td {
+//             border-top: 1px solid #000;
+//             font-weight: bold;
+//           }
+
+//           .center {
+//             text-align: center;
+//           }
+//         </style>
+//       </head>
+//       <body>
+//         <div class="slip">
+//           <h2>🧾 Order Slip</h2>
+//           <p><strong>Order ID:</strong> ${order.id}</p>
+//           <p><strong>Payment:</strong> ${order.payment_mode}</p>
+
+//           <table>
+//             <thead>
+//               <tr><th>Item</th><th>Qty</th><th>₹</th></tr>
+//             </thead>
+//             <tbody>
+//               ${order.items
+//                 .map(
+//                   (i) => `
+//                     <tr>
+//                       <td>${i.name}</td>
+//                       <td>${i.quantity}</td>
+//                       <td>${(i.price * i.quantity).toFixed(2)}</td>
+//                     </tr>
+//                   `
+//                 )
+//                 .join("")}
+//             </tbody>
+//             <tfoot>
+//               <tr><td colspan="2">Total</td><td>₹${order.total_price}</td></tr>
+//             </tfoot>
+//           </table>
+
+//           <p class="center" style="margin-top:10px;">Thank you!</p>
+//         </div>
+//       </body>
+//     </html>`;
+
+//   printWindow.document.write(slipHTML);
+//   printWindow.document.close();
+
+//   // Give it a short delay so layout fully loads before printing
+//   printWindow.onload = () => {
+//     printWindow.focus();
+//     printWindow.print();
+//   };
+// };
+
+const handlePrint = (order) => {
+  const slipHTML = `
+    <html>
+      <head><meta charset="UTF-8"><title>Order #${order.id}</title></head>
+      <body>
+        <center><b>🧾 Order Slip</b></center><br/>
+        Order ID: ${order.id}<br/>
+        Payment: ${order.payment_mode}<br/><br/>
+        ${order.items
+          .map(
+            (i) =>
+              `${i.name}  x${i.quantity}  ₹${(i.price * i.quantity).toFixed(2)}<br/>`
+          )
+          .join("")}
+        <hr/>
+        <b>Total: ₹${order.total_price}</b><br/><br/>
+        <center>Thank you!</center>
+      </body>
+    </html>`;
+
+  // ✅ Encode and send to RawBT
+  const encoded = encodeURIComponent(slipHTML);
+  window.location.href = `rawbt:${encoded}`;
+};
+
+
 
   const TABS = [
     { view: "pending", name: "Pending" },
