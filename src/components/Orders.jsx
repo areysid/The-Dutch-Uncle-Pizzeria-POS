@@ -23,6 +23,9 @@ const Orders = () => {
   const [total, setTotal] = useState(0);
   const [paymentMode, setPaymentMode] = useState("Cash");
   const [activeTab, setActiveTab] = useState("pending"); // new
+  // 🔄 Sorting and bulk actions
+  const [sortOrder, setSortOrder] = useState("asc"); // asc or desc
+
 
   const fetchOrders = () => api.get("/orders").then((res) => setOrders(res.data));
   const fetchMenu = () => api.get("/menu").then((res) => setMenu(res.data));
@@ -102,6 +105,28 @@ const Orders = () => {
     api.put(`/orders/${id}`, { status }).then(fetchOrders);
   };
 
+  // 🧩 Bulk status update — Mark All as Prepared / Collected
+  const handleBulkUpdate = (status) => {
+    // pick orders based on current tab
+    const targetOrders = orders.filter((order) => {
+      if (activeTab === "pending" && status === "completed")
+        return order.status === "pending";
+      if (activeTab === "completed" && status === "collected")
+        return order.status === "completed";
+      return false;
+    });
+
+    if (targetOrders.length === 0) return;
+
+    if (!confirm(`Are you sure you want to mark all ${targetOrders.length} orders as ${status}?`))
+      return;
+
+    Promise.all(targetOrders.map((order) => api.put(`/orders/${order.id}`, { status })))
+      .then(fetchOrders)
+      .catch((err) => console.error("Bulk update error:", err));
+  };
+
+
   const getImageUrl = (path) => {
     if (!path) return "";
     if (path.startsWith("http")) return path; // handle absolute URLs too
@@ -117,7 +142,7 @@ const Orders = () => {
       ? menu
       : menu.filter((item) => item.category === activeCategory);
 
-  
+
   // const handlePrint = (order) => {
   //   const printWindow = window.open("", "_blank");
   //   const slipHTML = `
@@ -218,137 +243,137 @@ const Orders = () => {
   // };
 
   // 🖨️ Print Slip
-//   const handlePrint = (order) => {
-//   const printWindow = window.open("", "_blank");
-//   const slipHTML = `
-//     <html>
-//       <head>
-//         <title>Order Slip #${order.id}</title>
-//         <style>
-//           @page {
-//             size: 58mm auto;  /* force roll width for thermal printers */
-//             margin: 0;
-//           }
+  //   const handlePrint = (order) => {
+  //   const printWindow = window.open("", "_blank");
+  //   const slipHTML = `
+  //     <html>
+  //       <head>
+  //         <title>Order Slip #${order.id}</title>
+  //         <style>
+  //           @page {
+  //             size: 58mm auto;  /* force roll width for thermal printers */
+  //             margin: 0;
+  //           }
 
-//           body {
-//             font-family: Arial, sans-serif;
-//             margin: 0;
-//             padding: 0;
-//             display: flex;
-//             justify-content: center;
-//             background: #fff;
-//           }
+  //           body {
+  //             font-family: Arial, sans-serif;
+  //             margin: 0;
+  //             padding: 0;
+  //             display: flex;
+  //             justify-content: center;
+  //             background: #fff;
+  //           }
 
-//           .slip {
-//             width: 58mm;
-//             padding: 8px;
-//             font-size: 12px;
-//             line-height: 1.4;
-//             color: #000;
-//           }
+  //           .slip {
+  //             width: 58mm;
+  //             padding: 8px;
+  //             font-size: 12px;
+  //             line-height: 1.4;
+  //             color: #000;
+  //           }
 
-//           h2 {
-//             text-align: center;
-//             font-size: 14px;
-//             margin: 5px 0 10px;
-//           }
+  //           h2 {
+  //             text-align: center;
+  //             font-size: 14px;
+  //             margin: 5px 0 10px;
+  //           }
 
-//           p {
-//             margin: 3px 0;
-//             font-size: 12px;
-//           }
+  //           p {
+  //             margin: 3px 0;
+  //             font-size: 12px;
+  //           }
 
-//           table {
-//             width: 100%;
-//             border-collapse: collapse;
-//             font-size: 12px;
-//           }
+  //           table {
+  //             width: 100%;
+  //             border-collapse: collapse;
+  //             font-size: 12px;
+  //           }
 
-//           th, td {
-//             text-align: left;
-//             padding: 3px 0;
-//           }
+  //           th, td {
+  //             text-align: left;
+  //             padding: 3px 0;
+  //           }
 
-//           th {
-//             border-bottom: 1px solid #000;
-//             font-weight: bold;
-//           }
+  //           th {
+  //             border-bottom: 1px solid #000;
+  //             font-weight: bold;
+  //           }
 
-//           tfoot td {
-//             border-top: 1px solid #000;
-//             font-weight: bold;
-//           }
+  //           tfoot td {
+  //             border-top: 1px solid #000;
+  //             font-weight: bold;
+  //           }
 
-//           .center {
-//             text-align: center;
-//           }
-//         </style>
-//       </head>
-//       <body>
-//         <div class="slip">
-//           <h2>🧾 Order Slip</h2>
-//           <p><strong>Order ID:</strong> ${order.id}</p>
-//           <p><strong>Payment:</strong> ${order.payment_mode}</p>
+  //           .center {
+  //             text-align: center;
+  //           }
+  //         </style>
+  //       </head>
+  //       <body>
+  //         <div class="slip">
+  //           <h2>🧾 Order Slip</h2>
+  //           <p><strong>Order ID:</strong> ${order.id}</p>
+  //           <p><strong>Payment:</strong> ${order.payment_mode}</p>
 
-//           <table>
-//             <thead>
-//               <tr><th>Item</th><th>Qty</th><th>₹</th></tr>
-//             </thead>
-//             <tbody>
-//               ${order.items
-//                 .map(
-//                   (i) => `
-//                     <tr>
-//                       <td>${i.name}</td>
-//                       <td>${i.quantity}</td>
-//                       <td>${(i.price * i.quantity).toFixed(2)}</td>
-//                     </tr>
-//                   `
-//                 )
-//                 .join("")}
-//             </tbody>
-//             <tfoot>
-//               <tr><td colspan="2">Total</td><td>₹${order.total_price}</td></tr>
-//             </tfoot>
-//           </table>
+  //           <table>
+  //             <thead>
+  //               <tr><th>Item</th><th>Qty</th><th>₹</th></tr>
+  //             </thead>
+  //             <tbody>
+  //               ${order.items
+  //                 .map(
+  //                   (i) => `
+  //                     <tr>
+  //                       <td>${i.name}</td>
+  //                       <td>${i.quantity}</td>
+  //                       <td>${(i.price * i.quantity).toFixed(2)}</td>
+  //                     </tr>
+  //                   `
+  //                 )
+  //                 .join("")}
+  //             </tbody>
+  //             <tfoot>
+  //               <tr><td colspan="2">Total</td><td>₹${order.total_price}</td></tr>
+  //             </tfoot>
+  //           </table>
 
-//           <p class="center" style="margin-top:10px;">Thank you!</p>
-//         </div>
-//       </body>
-//     </html>`;
+  //           <p class="center" style="margin-top:10px;">Thank you!</p>
+  //         </div>
+  //       </body>
+  //     </html>`;
 
-//   printWindow.document.write(slipHTML);
-//   printWindow.document.close();
+  //   printWindow.document.write(slipHTML);
+  //   printWindow.document.close();
 
-//   // Give it a short delay so layout fully loads before printing
-//   printWindow.onload = () => {
-//     printWindow.focus();
-//     printWindow.print();
-//   };
-// };
+  //   // Give it a short delay so layout fully loads before printing
+  //   printWindow.onload = () => {
+  //     printWindow.focus();
+  //     printWindow.print();
+  //   };
+  // };
 
-const handlePrint = (order) => {
-  let slipText = "";
-  slipText += "       [ORDER SLIP]\n";
-  slipText += "-----------------------------\n";
-  slipText += `Order ID: ${order.id}\n`;
-  slipText += `Payment: ${order.payment_mode}\n`;
-  slipText += "-----------------------------\n";
+  const handlePrint = (order) => {
+    let slipText = "";
+    slipText += "       [ORDER SLIP]\n";
+    slipText += "-----------------------------\n";
+    slipText += `Order ID: ${order.id}\n`;
+    slipText += `Payment: ${order.payment_mode}\n`;
+    slipText += "-----------------------------\n";
 
-  order.items.forEach((i) => {
-    const line = `${i.name} x${i.quantity} Rs${(i.price * i.quantity).toFixed(2)}`;
-    slipText += line + "\n";
-  });
+    order.items.forEach((i) => {
+      const line = `${i.name} x${i.quantity} Rs${(i.price * i.quantity).toFixed(2)}`;
+      slipText += line + "\n";
+    });
 
-  slipText += "-----------------------------\n";
-  slipText += `TOTAL: Rs. ${order.total_price}\n`;
-  slipText += "-----------------------------\n";
-  slipText += "      Thank you!\n";
-  slipText += "   Have a great day!\n\n\n\n";
+    slipText += "-----------------------------\n";
+    slipText += `TOTAL: Rs. ${order.total_price}\n`;
+    slipText += "-----------------------------\n";
+    slipText += "      Thank you!\n";
+    slipText += "   Have a great day!\n\n\n\n";
 
-  const encoded = encodeURIComponent(slipText);
-  window.location.href = `rawbt:text:${encoded}`;
-};
+    const encoded = encodeURIComponent(slipText);
+    window.location.href = `rawbt:text:${encoded}`;
+  };
 
   const TABS = [
     { view: "pending", name: "Pending" },
@@ -402,9 +427,11 @@ const handlePrint = (order) => {
   });
 
   // 🆕 Sort "preparing" and "completed" orders by ascending ID
-  if (activeTab === "completed" || activeTab === "pending") {
-    filteredOrders = filteredOrders.sort((a, b) => a.id - b.id);
-  }
+  // 🧭 Apply sorting dynamically
+  filteredOrders = filteredOrders.sort((a, b) =>
+    sortOrder === "asc" ? a.id - b.id : b.id - a.id
+  );
+
 
   // Pagination
   const paginatedOrders = filteredOrders.slice(0, visibleCount);
@@ -623,27 +650,62 @@ const handlePrint = (order) => {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
             <h3 className="text-xl font-semibold capitalize">{activeTab} Orders</h3>
 
-            {/* 🗓️ Date Filter Toggle */}
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="todayFilter"
-                checked={showTodayOnly}
-                onChange={(e) => {
-                  setShowTodayOnly(e.target.checked);
-                  setVisibleCount(10); // reset pagination when toggled
-                }}
-                className="w-4 h-4 accent-blue-700"
-              />
-              <label
-                htmlFor="todayFilter"
-                className="text-sm font-medium text-gray-700 select-none"
-              >
-                Show only today’s orders
-              </label>
+            <div className="flex items-center flex-wrap gap-4">
+              {/* 🗓️ Date Filter Toggle */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="todayFilter"
+                  checked={showTodayOnly}
+                  onChange={(e) => {
+                    setShowTodayOnly(e.target.checked);
+                    setVisibleCount(10);
+                  }}
+                  className="w-4 h-4 accent-blue-700"
+                />
+                <label
+                  htmlFor="todayFilter"
+                  className="text-sm font-medium text-gray-700 select-none"
+                >
+                  Show only today’s orders
+                </label>
+              </div>
+
+              {/* ⏫ Sorting Dropdown */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-700">Sort by ID:</span>
+                <Select value={sortOrder} onValueChange={setSortOrder}>
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="Sort Order" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="asc">ASC</SelectItem>
+                    <SelectItem value="desc">DESC</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* 🔘 Mark All Button */}
+              {(activeTab === "pending" || activeTab === "completed") && (
+                <div className="w-full sm:w-auto flex justify-center sm:justify-end">
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      handleBulkUpdate(activeTab === "pending" ? "completed" : "collected")
+                    }
+                    className="bg-black text-white hover:bg-gray-800"
+                  >
+                    {activeTab === "pending"
+                      ? "Mark All as Prepared"
+                      : "Mark All as Collected"}
+                  </Button>
+                </div>
+              )}
+
             </div>
           </div>
         </CardHeader>
+
 
         <CardContent className="space-y-4">
           {paginatedOrders.length ? (
