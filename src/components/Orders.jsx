@@ -11,6 +11,14 @@ import {
   SelectItem,
   SelectValue,
 } from "./ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
@@ -25,6 +33,9 @@ const Orders = () => {
   const [activeTab, setActiveTab] = useState("pending"); // new
   // 🔄 Sorting and bulk actions
   const [sortOrder, setSortOrder] = useState("asc"); // asc or desc
+  // 🧾 Delete confirmation popup
+  const [deleteDialog, setDeleteDialog] = useState({ open: false, orderId: null });
+
 
 
   const fetchOrders = () => api.get("/orders").then((res) => setOrders(res.data));
@@ -143,214 +154,7 @@ const Orders = () => {
       : menu.filter((item) => item.category === activeCategory);
 
 
-  // const handlePrint = (order) => {
-  //   const printWindow = window.open("", "_blank");
-  //   const slipHTML = `
-  //     <html>
-  //       <head>
-  //         <title>Order Slip #${order.id}</title>
-  //         <style>
-  //           body { font-family: Arial, sans-serif; margin: 15px; width: 260px; }
-  //           h2 { text-align: center; font-size: 16px; margin-bottom: 10px; }
-  //           p { margin: 3px 0; font-size: 13px; }
-  //           table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  //           th, td { text-align: left; padding: 4px; }
-  //           th { border-bottom: 1px solid #000; }
-  //           tfoot td { border-top: 1px solid #000; font-weight: bold; }
-  //         </style>
-  //       </head>
-  //       <body>
-  //         <h2>🧾 Order Slip</h2>
-  //         <p><strong>Order ID:</strong> ${order.id}</p>
-  //         <p><strong>Payment:</strong> ${order.payment_mode}</p>
-  //         <table>
-  //           <thead>
-  //             <tr><th>Item</th><th>Qty</th><th>₹</th></tr>
-  //           </thead>
-  //           <tbody>
-  //             ${order.items
-  //       .map(
-  //         (i) =>
-  //           `<tr>
-  //                     <td>${i.name}</td>
-  //                     <td>${i.quantity}</td>
-  //                     <td>${(i.price * i.quantity).toFixed(2)}</td>
-  //                   </tr>`
-  //       )
-  //       .join("")}
-  //           </tbody>
-  //           <tfoot>
-  //             <tr><td colspan="2">Total</td><td>₹${order.total_price}</td></tr>
-  //           </tfoot>
-  //         </table>
-  //         <p style="text-align:center;margin-top:10px;">Thank you!</p>
-  //       </body>
-  //     </html>`;
-  // //   const slipHTML = `
-  // // <html>
-  // //   <head>
-  // //     <title>Order Slip #${order.id}</title>
-  // //     <style>
-  // //       @page {
-  // //         size: 58mm auto; /* force paper roll width */
-  // //         margin: 0;
-  // //       }
-  // //       body {
-  // //         font-family: Arial, sans-serif;
-  // //         width: 58mm;
-  // //         margin: 0;
-  // //         padding: 5px;
-  // //       }
-  // //       h2 { text-align: center; font-size: 14px; margin: 5px 0; }
-  // //       p { font-size: 12px; margin: 2px 0; }
-  // //       table { width: 100%; font-size: 12px; border-collapse: collapse; }
-  // //       th, td { text-align: left; padding: 2px; }
-  // //       th { border-bottom: 1px solid #000; }
-  // //       tfoot td { border-top: 1px solid #000; font-weight: bold; }
-  // //     </style>
-  // //   </head>
-  // //   <body>
-  // //     <h2>🧾 Order Slip</h2>
-  // //         <p><strong>Order ID:</strong> ${order.id}</p>
-  // //         <p><strong>Payment:</strong> ${order.payment_mode}</p>
-  // //         <table>
-  // //           <thead>
-  // //             <tr><th>Item</th><th>Qty</th><th>₹</th></tr>
-  // //           </thead>
-  // //           <tbody>
-  // //             ${order.items
-  // //       .map(
-  // //         (i) =>
-  // //           `<tr>
-  // //                     <td>${i.name}</td>
-  // //                     <td>${i.quantity}</td>
-  // //                     <td>${(i.price * i.quantity).toFixed(2)}</td>
-  // //                   </tr>`
-  // //       )
-  // //       .join("")}
-  // //           </tbody>
-  // //           <tfoot>
-  // //             <tr><td colspan="2">Total</td><td>₹${order.total_price}</td></tr>
-  // //           </tfoot>
-  // //         </table>
-  // //         <p style="text-align:center;margin-top:10px;">Thank you!</p>
-  // //   </body>
-  // // </html>`;
 
-  //   printWindow.document.write(slipHTML);
-  //   printWindow.document.close();
-  //   printWindow.print();
-  // };
-
-  // 🖨️ Print Slip
-  //   const handlePrint = (order) => {
-  //   const printWindow = window.open("", "_blank");
-  //   const slipHTML = `
-  //     <html>
-  //       <head>
-  //         <title>Order Slip #${order.id}</title>
-  //         <style>
-  //           @page {
-  //             size: 58mm auto;  /* force roll width for thermal printers */
-  //             margin: 0;
-  //           }
-
-  //           body {
-  //             font-family: Arial, sans-serif;
-  //             margin: 0;
-  //             padding: 0;
-  //             display: flex;
-  //             justify-content: center;
-  //             background: #fff;
-  //           }
-
-  //           .slip {
-  //             width: 58mm;
-  //             padding: 8px;
-  //             font-size: 12px;
-  //             line-height: 1.4;
-  //             color: #000;
-  //           }
-
-  //           h2 {
-  //             text-align: center;
-  //             font-size: 14px;
-  //             margin: 5px 0 10px;
-  //           }
-
-  //           p {
-  //             margin: 3px 0;
-  //             font-size: 12px;
-  //           }
-
-  //           table {
-  //             width: 100%;
-  //             border-collapse: collapse;
-  //             font-size: 12px;
-  //           }
-
-  //           th, td {
-  //             text-align: left;
-  //             padding: 3px 0;
-  //           }
-
-  //           th {
-  //             border-bottom: 1px solid #000;
-  //             font-weight: bold;
-  //           }
-
-  //           tfoot td {
-  //             border-top: 1px solid #000;
-  //             font-weight: bold;
-  //           }
-
-  //           .center {
-  //             text-align: center;
-  //           }
-  //         </style>
-  //       </head>
-  //       <body>
-  //         <div class="slip">
-  //           <h2>🧾 Order Slip</h2>
-  //           <p><strong>Order ID:</strong> ${order.id}</p>
-  //           <p><strong>Payment:</strong> ${order.payment_mode}</p>
-
-  //           <table>
-  //             <thead>
-  //               <tr><th>Item</th><th>Qty</th><th>₹</th></tr>
-  //             </thead>
-  //             <tbody>
-  //               ${order.items
-  //                 .map(
-  //                   (i) => `
-  //                     <tr>
-  //                       <td>${i.name}</td>
-  //                       <td>${i.quantity}</td>
-  //                       <td>${(i.price * i.quantity).toFixed(2)}</td>
-  //                     </tr>
-  //                   `
-  //                 )
-  //                 .join("")}
-  //             </tbody>
-  //             <tfoot>
-  //               <tr><td colspan="2">Total</td><td>₹${order.total_price}</td></tr>
-  //             </tfoot>
-  //           </table>
-
-  //           <p class="center" style="margin-top:10px;">Thank you!</p>
-  //         </div>
-  //       </body>
-  //     </html>`;
-
-  //   printWindow.document.write(slipHTML);
-  //   printWindow.document.close();
-
-  //   // Give it a short delay so layout fully loads before printing
-  //   printWindow.onload = () => {
-  //     printWindow.focus();
-  //     printWindow.print();
-  //   };
-  // };
 
   const handlePrint = (order) => {
     let slipText = "";
@@ -435,6 +239,27 @@ const Orders = () => {
 
   // Pagination
   const paginatedOrders = filteredOrders.slice(0, visibleCount);
+
+  // 🗑️ Delete single order
+  const handleDeleteOrder = (id) => {
+    setDeleteDialog({ open: true, orderId: id }); // open modal
+  };
+
+  const confirmDelete = () => {
+    const { orderId } = deleteDialog;
+    if (!orderId) return;
+
+    api
+      .delete(`/orders/${orderId}`)
+      .then(() => {
+        setDeleteDialog({ open: false, orderId: null });
+        fetchOrders();
+      })
+      .catch((err) => {
+        console.error("Delete failed:", err);
+        setDeleteDialog({ open: false, orderId: null });
+      });
+  };
 
 
   return (
@@ -777,6 +602,7 @@ const Orders = () => {
                       >
                         🖨️ Print Slip
                       </Button>
+
                       <Button
                         size="sm"
                         className="w-full sm:w-auto"
@@ -784,8 +610,18 @@ const Orders = () => {
                       >
                         Mark as Prepared
                       </Button>
+
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="w-full sm:w-auto bg-red-600 text-white hover:bg-red-700"
+                        onClick={() => handleDeleteOrder(order.id)}
+                      >
+                        🗑️ Delete
+                      </Button>
                     </div>
                   )}
+
 
                   {activeTab === "completed" && (
                     <div className="flex justify-center sm:justify-end">
@@ -835,7 +671,34 @@ const Orders = () => {
         </CardContent>
       </Card>
 
+      {/* 🗑️ Delete Confirmation Dialog */}
+      <Dialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog({ open, orderId: null })}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Delete Order #{deleteDialog.orderId}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-gray-600 mt-2">
+            Are you sure you want to permanently delete this order?
+            This action cannot be undone.
+          </p>
 
+          <DialogFooter className="flex justify-end gap-2 mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialog({ open: false, orderId: null })}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              className="bg-red-600 hover:bg-red-700 text-white"
+              onClick={confirmDelete}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
