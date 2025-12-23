@@ -24,6 +24,12 @@ const Reports = () => {
     return `${BACKEND_URL}${path}`;
   };
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-GB"); // DD/MM/YYYY
+  };
+
   const filteredSales = itemSales.filter((row) => {
     if (!fromDate && !toDate) return true;
     const saleDate = new Date(row.date);
@@ -38,7 +44,7 @@ const Reports = () => {
   const downloadCSV = () => {
     const headers = ["Date", "Item", "Quantity Sold", "Total Sales (₹)"];
     const rows = filteredSales.map((row) => [
-      row.date,
+      formatDate(row.date),
       row.name,
       row.quantity,
       row.total_sales.toFixed(2),
@@ -132,8 +138,8 @@ const Reports = () => {
               {filteredSales.length ? (
                 filteredSales.map((row) => (
                   <tr key={`${row.date}-${row.id}`}>
-                    <td className="px-2 py-2 truncate whitespace-nowrap">
-                      {row.date}
+                    <td className="px-2 py-2 whitespace-nowrap">
+                      {formatDate(row.date)}
                     </td>
 
                     {/* <td className="px-2 py-2">
