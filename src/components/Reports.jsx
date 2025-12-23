@@ -121,7 +121,7 @@ const Reports = () => {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-2 py-2 text-left font-medium">Date</th>
-                <th className="px-2 py-2 text-left font-medium">Image</th>
+                {/* <th className="px-2 py-2 text-left font-medium">Image</th> */}
                 <th className="px-2 py-2 text-left font-medium">Item</th>
                 <th className="px-2 py-2 text-left font-medium">Qty</th>
                 <th className="px-2 py-2 text-left font-medium">₹ Total</th>
