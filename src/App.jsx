@@ -43,7 +43,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen min-w-screen bg-gray-50 font-sans">
+    <div className="min-h-screen w-full bg-gray-50 font-sans overflow-x-hidden">
       {/* Header */}
       <header className="p-6 bg-white border-b border-gray-100 shadow-lg text-center">
         <h1 className="text-4xl font-extrabold text-blue-700 tracking-tight">
