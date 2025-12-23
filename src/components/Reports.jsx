@@ -132,7 +132,7 @@ const Reports = () => {
               {filteredSales.length ? (
                 filteredSales.map((row) => (
                   <tr key={`${row.date}-${row.id}`}>
-                    <td className="px-2 py-2 truncate whitespace-nowrap">
+                    <td className="px-2 py-2 whitespace-nowrap">
                       {row.date}
                     </td>
 
@@ -154,7 +154,7 @@ const Reports = () => {
 
                     <td className="px-2 py-2">{row.quantity}</td>
 
-                    <td className="px-2 py-2 font-medium truncate whitespace-nowrap">
+                    <td className="px-2 py-2 font-medium whitespace-nowrap">
                       ₹{row.total_sales.toFixed(2)}
                     </td>
                   </tr>
