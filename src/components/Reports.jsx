@@ -136,7 +136,7 @@ const Reports = () => {
                       {row.date}
                     </td>
 
-                    <td className="px-2 py-2">
+                    {/* <td className="px-2 py-2">
                       {row.image ? (
                         <img
                           src={getImageUrl(row.image)}
@@ -146,7 +146,7 @@ const Reports = () => {
                       ) : (
                         "—"
                       )}
-                    </td>
+                    </td> */}
 
                     <td className="px-2 py-2 truncate whitespace-nowrap">
                       {row.name}
